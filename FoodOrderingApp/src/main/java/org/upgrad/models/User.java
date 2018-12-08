@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
-/*
- * User model class contain all the attributes to be mapped to all the fields in the users table in the database.
- * Annotations are used to specify all the constraints to the table and table-columns in the database.
- * Here getter, setter and constructor are defined for this model class.
+/* Controller  ------> Services Layer ---> Data Access Layer ( Model)
+ * User model: Map attributes  ----> columns in the users table in the restaurant database.
+ * Also,Contains Annotations, getters and setters. Annotations map the fields to table columns.
  */
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -44,6 +44,9 @@ public class User {
         this.password = password;
     }
 
+    /*
+        Getters & Setters
+     */
     public Integer getId() {
         return id;
     }
