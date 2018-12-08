@@ -27,4 +27,9 @@ public class ItemServiceImpl implements ItemService{
         }
         return itemList;
     }
+      //Get the item by id
+    @Override
+    public Item getItemById(int id){
+        return itemRepository.getItemById(id);
+    }
 }
