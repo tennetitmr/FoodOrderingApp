@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.upgrad.models.Restaurant;
 //import org.upgrad.models.RestaurantResponse;
 import org.upgrad.requestResponseEntity.RestaurantResponse;
+import org.upgrad.requestResponseEntity.RestaurantResponseCategorySet;
 import org.upgrad.services.RestaurantService;
 import org.upgrad.services.UserAuthTokenService;
 import java.util.List;
@@ -22,8 +23,7 @@ public class RestaurantController {
     @Autowired
     private UserAuthTokenService userAuthTokenService;
 
-    /**
-     * Retreives all restaurants
+    /** To read all restaurants info
      * @return returns all restaurants
      */
     @GetMapping("")
@@ -32,8 +32,8 @@ public class RestaurantController {
     }
 
     /**
-     * This is GET API to return all restaurants by restaurant name
-     * @param restaurantName name of restaurant
+     * This is GET API -->  Return all Restaurants by Restaurant Name
+     * @param restaurantName --> name of restaurant
      * @return all restaurants by restaurantName along with categories
      */
     @GetMapping("/name/{restaurantName}")
@@ -43,13 +43,13 @@ public class RestaurantController {
             return new ResponseEntity<>(restaurant, HttpStatus.OK);
         }
         else {
-            return new ResponseEntity<>("No Restaurant by this name!", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("No Restaurant by this name!", HttpStatus.BAD_REQUEST);
         }
     }
 
     /**
-     * This is GET API to return all restaurants along with categories
-     * @param categoryName category name
+     * This is GET API --> Return all Restaurants along with Categories
+     * @param categoryName --> Category Name
      * @return all restaurants for input category name
      */
     @GetMapping("category/{categoryName}")
@@ -64,13 +64,13 @@ public class RestaurantController {
     }
 
     /**
-     * It is GET API to retrieve restaurant details with categories and items in each category
-     * @param restaurantId restaurant id
+     * It is GET API --> to read restaurant details with Categories and Items from every category.
+     * @param restaurantId --> restaurant id
      * @return restaurant details
      */
     @GetMapping("/{restaurantId}")
     public ResponseEntity<?> getRestaurantById(@PathVariable int restaurantId) {
-        Restaurant restaurant =  restaurantService.getRestaurantDetails(restaurantId);
+        RestaurantResponseCategorySet restaurant =  restaurantService.getRestaurantDetails(restaurantId);
         if (restaurant!=null) {
             return new ResponseEntity<>(restaurant, HttpStatus.OK);
         }
@@ -80,15 +80,15 @@ public class RestaurantController {
     }
 
     /**
-     * PUT API to update user rating
-     * @param restaurantId restaurant id
-     * @param rating user rating to update
-     * @param accessToken access token by user
+     * PUT API --> to update user rating
+     * @param restaurantId --> restaurant id
+     * @param rating       --> user rating to update
+     * @param accessToken  --> access token by user
      * @return updated values of restaurant details
      */
     @PutMapping("/{restaurantId}")
     @CrossOrigin
-    public ResponseEntity<?> updateRestaurantDetails(@PathVariable int restaurantId, @RequestParam Double rating, @RequestHeader String accessToken) {
+    public ResponseEntity<?> updateRestaurantDetails(@PathVariable int restaurantId, @RequestParam int rating, @RequestHeader String accessToken) {
         if (userAuthTokenService.isUserLoggedIn(accessToken) == null) {
             return new ResponseEntity<>("Please Login first to access this endpoint!", HttpStatus.UNAUTHORIZED);
         } else if (userAuthTokenService.isUserLoggedIn(accessToken).getLogoutAt() != null) {
@@ -102,5 +102,5 @@ public class RestaurantController {
                 return new ResponseEntity<>("No Restaurant by this id!", HttpStatus.BAD_REQUEST);
             }
         }
+      }
     }
-}
