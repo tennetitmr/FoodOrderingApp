@@ -20,8 +20,8 @@ public class ItemController {
     private ItemService itemService;
 
     /**
-     * It is GET API to retrieve top item details by popularity
-     * @param restaurantId restaurant id
+     ** GET API --> to  read top Item details by Popularity**
+     * @param restaurantId --> restaurant id
      * @return restaurant details
      */
     @GetMapping("/{restaurantId}")
