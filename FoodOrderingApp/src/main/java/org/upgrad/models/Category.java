@@ -4,6 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 
+/* Controller  ------> Services Layer ---> Data Access Layer (Model)
+ * Category model: Map attributes  ----> columns in the Category table in the restaurant database.
+ * Also,Contains Annotations, getters and setters. Annotations map the fields to table columns.
+ */
+
 @Entity
 @Table(name="category")
 public class Category {
