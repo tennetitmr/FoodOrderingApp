@@ -2,11 +2,9 @@ package org.upgrad.models;
 
 import javax.persistence.*;
 
-
-/*
- * STATES model class contain all the attributes to be mapped to all the fields in the STATES table in the database.
- * Annotations are used to specify all the constraints to the table and table-columns in the database.
- * Here getter, setter and constructor are defined for this model class.
+/* Controller  ------> Services Layer ---> Data Access Layer (Model)
+ * States model: Map attributes  ----> columns in the states table in the restaurant database.
+ * Also,Contains Annotations, getters and setters. Annotations map the fields to table columns.
  */
 
 @Entity
