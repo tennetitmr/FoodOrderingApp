@@ -1,60 +1,60 @@
-package org.upgrad.models;
+package org.upgrad.repositories;
 
+import org.upgrad.models.Address;
+import org.upgrad.models.States;
+import org.upgrad.models.UserAddress;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.*;
+// Controller  ------> Services Layer ---> Data Access Layer (Repository)  --> Database
+//                                                  AddressRepository
+// This AddressRepository interface: User Service ---------------------> Address table & User_Address table
 
-/* Controller  ------> Services Layer ---> Data Access Layer ( Model)
- * User Address model: Map attributes  ----> columns in the USER_ADDRESS table in the restaurant database.
- * Also,Contains Annotations, getters and setters. Annotations map the fields to table columns.
- */
+@Repository
+public interface AddressRepository extends CrudRepository<Address, Integer> {
 
-@Entity
-@Table(name = "USER_ADDRESS")
-public class UserAddress {
+    //Add Address
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true,value="INSERT INTO Address (flat_buil_number,locality,city,zipcode,state_id) VALUES (?1,?2,?3,?4,?5)")
+    Integer addAddress(String flat_buil_number, String locality, String city,String zipcode, Integer state_id );
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    // Add User Details
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true,value="INSERT INTO User_Address (type,user_id,address_id) VALUES (?1,?2,?3)")
+    Integer addUserAddress(String type, Integer user_id , Integer address_id);
 
-    @Column(name = "type", nullable = false)
-    private String type = "TEMP";
+    //  Read max(id) of the address.
+    @Query(nativeQuery = true,value = "SELECT max(id) FROM ADDRESS ")
+    Integer countAddress();
 
-    @Column(name = "user_id", nullable = false)
-    private String user_id ;
+    //  Read State Name for the state_id.
+    @Query(nativeQuery = true,value = "SELECT *  FROM ADDRESS where id = ?1 ")
+    Address findAddressById(Integer id);
 
-    @Column(name = "address_id", nullable = false)
-    private String address_id ;
+    //  Update details of the user in Address Table
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true,value="UPDATE ADDRESS SET flat_buil_number =?1 , locality=?2  , city=?3 , zipcode=?4, state_id=?5 WHERE id=?6")
+    Integer updateAddressById( String flat_buil_number, String locality, String city , String zipcode, Integer state_id, Integer id);
 
-    //Getters & Setters
-    public Integer getId() {
-        return id;
-    }
+    //  Delete the  details for particular user from Address Table.
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true,value="DELETE FROM ADDRESS WHERE id =?1")
+    Integer deleteAddressById( Integer id);
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true,value="DELETE FROM User_Address WHERE address_id =?1")
+    Integer deleteUserAddressById( Integer id);
 
-    public String getType() {
-        return type;
-    }
+    // Read Permanent Address Details
+    @Query(nativeQuery = true,value = "SELECT address_id  FROM USER_ADDRESS where type = 'prem' and user_id = ?1 ")
+    Iterable<Integer> getPermAdd(Integer id);
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
-    }
-
-    public String getAddress_id() {
-        return address_id;
-    }
-
-    public void setAddress_id(String address_id) {
-        this.address_id = address_id;
-    }
 }
