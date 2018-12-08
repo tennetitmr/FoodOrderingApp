@@ -6,10 +6,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-/*
- * UserAuthToken model class contain all the attributes to be mapped to all the fields in the user_auth_token table in the database.
- * Annotations are used to specify all the constraints to the table and table-columns in the database.
- * Here getter, setter and constructor are defined for this model class.
+/* Controller  ------> Services Layer ---> Data Access Layer ( Model)
+ * UserAuthToken model: Maps attributes --> fields in the user_auth_token table.
+ * Also, it contains Annotations, getters and setters. Annotations map the fields to table columns.
  */
 @Entity
 @Table(name="user_auth_token")
@@ -44,6 +43,8 @@ public class UserAuthToken {
         this.loginAt = loginAt;
     }
 
+    // Getters &
+    // Setters
     public long getId() {
         return id;
     }
