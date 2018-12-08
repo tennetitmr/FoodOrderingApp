@@ -5,6 +5,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/* Controller  ------> Services Layer ---> Data Access Layer (Model)
+ * Item model: Map attributes  ----> columns in the Item table in the restaurant database.
+ * Also,Contains Annotations, getters and setters. Annotations map the fields to table columns.
+ */
+
 @Entity
 @Table(name="item")
 public class Item {
@@ -19,6 +24,7 @@ public class Item {
 
     private String type;
 
+    // Getters & Setters
     public String getType() {
         return type;
     }
