@@ -2,10 +2,11 @@ package org.upgrad.services;
 
 import org.upgrad.models.UserAuthToken;
 
-/*
- * This UserAuthTokenService interface gives the list of all the service that exist in the userAuthToken service implementation class.
- * Controller class will be calling the service methods by this interface.
+/*               interface
+/*  Controller ------------------> Service Methods
+ *  UserAuthTokenService Interface : List of all the service methods that exist in the userAuthToken service implementation class.
  */
+
 public interface UserAuthTokenService {
 
     void addAccessToken(Integer userId, String accessToken);
@@ -13,4 +14,6 @@ public interface UserAuthTokenService {
     void removeAccessToken(String accessToken);
 
     UserAuthToken isUserLoggedIn(String accessToken);
+
+    int getUserId (String accessToken);
 }
