@@ -16,16 +16,13 @@ public class CategoryController {
     private CategoryService categoryService;
 
 
-    /*
-        This is used to get all categories that are stored in DB.
-     */
+    /** This Controller --> reads all categories that are stored in the table.  */
     @GetMapping("/category")
     public ResponseEntity<?> getAllCategories() {
         return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
     }
 
-    /*
-        This function returns the category details corresponding to category name.
+    /** This function returns all the Category details corresponding to the given Category name.
      */
     @GetMapping("/category/{categoryName}")
     public ResponseEntity<?> getCategoriesByName(@PathVariable("categoryName") String categoryName) {
