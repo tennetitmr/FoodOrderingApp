@@ -2,10 +2,9 @@ package org.upgrad.models;
 
 import javax.persistence.*;
 
-/*
- * Restaurant model class contain all the attributes to be mapped to all the fields in the users table in the database.
- * Annotations are used to specify all the constraints to the table and table-columns in the database.
- * Here getter, setter and constructor are defined for this model class.
+/* Controller  ------> Services Layer ---> Data Access Layer (Model)
+ * Restaurant model: Map attributes  ----> columns in the Restaurant table in the restaurant database.
+ * Also,Contains Annotations, getters and setters. Annotations map the fields to table columns.
  */
 
 @Entity
@@ -36,11 +35,7 @@ public class Restaurant{
 
     @OneToMany(fetch = FetchType.EAGER)
 
-    @Transient
-    private Iterable<Category> categories;
-
     // Getters and setters for variables
-
     public int getId() {
         return id;
     }
@@ -98,12 +93,5 @@ public class Restaurant{
         this.address = address;
     }
 
-    public Iterable<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(Iterable<Category> category) {
-        this.categories = category;
-    }
 
 }
