@@ -9,9 +9,10 @@ import javax.persistence.*;
 import java.util.Set;
 
 /*
- * RestaurantResponse class contain all the attributes that are to be returned as a response.
- * Here getter, setter and constructor are defined for this response class.
+ * RestaurantResponse : All attributes to be returned as a response.
+ *                    : Contains Constructor + Getter +  Setter.
  */
+
 public class RestaurantResponse {
 
     private Integer id;
