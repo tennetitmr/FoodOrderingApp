@@ -5,12 +5,20 @@ import org.springframework.stereotype.Service;
 import org.upgrad.models.Category;
 import org.upgrad.models.Item;
 import org.upgrad.models.Restaurant;
-//import org.upgrad.models.RestaurantResponse;
+import org.upgrad.requestResponseEntity.CategoryResponse;
 import org.upgrad.requestResponseEntity.RestaurantResponse;
 import org.upgrad.repositories.*;
+import org.upgrad.requestResponseEntity.RestaurantResponseCategorySet;
+
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+/*  Controller ---> Service --> Service Implementation
+    RestaurantServiceImplementation contains Restaurant Service related methods.
+ */
 
 @Service
 @Transactional
@@ -31,11 +39,10 @@ public class RestaurantServiceImpl implements RestaurantService{
         this.restaurantRepository = restaurantRepository;
     }
 
-
     @Override
     public Iterable<RestaurantResponse> getAllRestaurant() {
         List<RestaurantResponse> restaurants = new ArrayList<>();
-        Iterable<Restaurant> rest = restaurantRepository.findAll();
+        Iterable<Restaurant> rest = restaurantRepository.findAllSorted();
         for (Restaurant restaurant: rest) {
             List<String> categoryList = new ArrayList<>();
             List<Integer> catIds = (List<Integer>) restaurantRepository.getCategoryId(restaurant.getId());
@@ -45,9 +52,9 @@ public class RestaurantServiceImpl implements RestaurantService{
                     categoryList.add(restCategory);
                 }
             }
-            RestaurantResponse resp = new RestaurantResponse(restaurant.getId(),restaurant.getRestaurantName(),restaurant.getPhotoUrl(),restaurant.getUserRating(),restaurant.getAvgPrice(),restaurant.getNumberUsersRated(),restaurant.getAddress(),categoryList.toString());
+            RestaurantResponse resp = new RestaurantResponse(restaurant.getId(),restaurant.getRestaurantName(),restaurant.getPhotoUrl(),restaurant.getUserRating(),restaurant.getAvgPrice(),restaurant.getNumberUsersRated(),restaurant.getAddress(),categoryList.toString().replace("[", "").replace("]", ""));
             restaurants.add(resp);
-        }
+            }
         return restaurants;
     }
 
@@ -67,7 +74,7 @@ public class RestaurantServiceImpl implements RestaurantService{
                         categoryList.add(restCategory);
                     }
                 }
-                RestaurantResponse resp = new RestaurantResponse(restaurant.getId(),restaurant.getRestaurantName(),restaurant.getPhotoUrl(),restaurant.getUserRating(),restaurant.getAvgPrice(),restaurant.getNumberUsersRated(),restaurant.getAddress(),categoryList.toString());
+                RestaurantResponse resp = new RestaurantResponse(restaurant.getId(),restaurant.getRestaurantName(),restaurant.getPhotoUrl(),restaurant.getUserRating(),restaurant.getAvgPrice(),restaurant.getNumberUsersRated(),restaurant.getAddress(),categoryList.toString().replace("[", "").replace("]", ""));
                 restaurants.add(resp);
             }
         }
@@ -87,7 +94,7 @@ public class RestaurantServiceImpl implements RestaurantService{
                     String restCategory = categoryRepository.getCategoryNameById(catId);
                     categoryList.add(restCategory);
                 }
-                RestaurantResponse resp = new RestaurantResponse(restaurant.getId(),restaurant.getRestaurantName(),restaurant.getPhotoUrl(),restaurant.getUserRating(),restaurant.getAvgPrice(),restaurant.getNumberUsersRated(),restaurant.getAddress(),categoryList.toString());
+                RestaurantResponse resp = new RestaurantResponse(restaurant.getId(),restaurant.getRestaurantName(),restaurant.getPhotoUrl(),restaurant.getUserRating(),restaurant.getAvgPrice(),restaurant.getNumberUsersRated(),restaurant.getAddress(),categoryList.toString().replace("[", "").replace("]", ""));
                 restaurants.add(resp);
             }
         }
@@ -95,23 +102,34 @@ public class RestaurantServiceImpl implements RestaurantService{
     }
 
     @Override
-    public Restaurant getRestaurantDetails(int id) {
-        Restaurant restaurant = restaurantRepository.getRestaurantById(id);
-        Iterable<Category> categories = categoryRepository.getCategoriesByRestId(id);
-        if (categories.iterator().hasNext()) {
-            for(Category category: categories) {
-                Iterable<Item> items = itemRepository.getRestaurantItems(category.getId(),id);
-                for (Item item: items) {
-                    category.setItem(item);
-                }
-            }
-        }
-        restaurant.setCategories(categories);
-        return restaurant;
+    public RestaurantResponseCategorySet getRestaurantDetails(int id) {
+       Restaurant restaurant = restaurantRepository.getRestaurantById(id);
+       RestaurantResponseCategorySet restaurantResponseCategorySet = null;
+       Set<Category> categories = categoryRepository.getCategoriesByRestId(id);
+       Set<CategoryResponse> categorySet = new HashSet<>();
+       if (categories.iterator().hasNext()) {
+           for(Category category: categories) {
+               Set<Item> items = itemRepository.getRestaurantItems(category.getId(),id);
+               CategoryResponse categoryResponse = new CategoryResponse(category.getId(),category.getCategoryName(),items);
+               categorySet.add(categoryResponse);
+           }
+       }
+       if (restaurant!=null) {
+           restaurantResponseCategorySet = new RestaurantResponseCategorySet(id,restaurant.getRestaurantName(),restaurant.getPhotoUrl(),restaurant.getUserRating(),restaurant.getAvgPrice(),restaurant.getNumberUsersRated(),restaurant.getAddress(),categorySet);
+       }
+       return restaurantResponseCategorySet;
     }
 
     @Override
-    public Restaurant updateRating(int id,Double rating) {
-        return restaurantRepository.updateRestaurantDetails(id,rating);
+    public Restaurant updateRating(int id,int rating) {
+        Restaurant restaurant = restaurantRepository.getRestaurantById(id);
+        if (restaurant!=null) {
+            restaurant.setNumberUsersRated(restaurant.getNumberUsersRated() + 1);
+            Double newRating = ((restaurant.getUserRating() * restaurant.getNumberUsersRated()) + rating) / restaurant.getNumberUsersRated();
+            Double roundOff = (double) Math.round(newRating * 100.0) / 100.0;
+            restaurant.setUserRating(roundOff);
+            restaurantRepository.updateRestaurantDetails(id, roundOff, restaurant.getNumberUsersRated());
+        }
+        return restaurant;
     }
 }
