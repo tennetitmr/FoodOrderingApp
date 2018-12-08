@@ -10,7 +10,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.upgrad.models.Item;
-import org.upgrad.models.Restaurant;
 import org.upgrad.requestResponseEntity.RestaurantResponse;
 import org.upgrad.requestResponseEntity.RestaurantResponseCategorySet;
 import org.upgrad.services.ItemService;
@@ -52,11 +51,13 @@ public class ItemControllerTest {
 
     @Test
     public void getPopularItemsByRestaurantId() throws Exception{
-
+        RestaurantResponseCategorySet restaurant = new RestaurantResponseCategorySet();
+        restaurant.setId(1);
+        restaurant.setRestaurantName("dominoz");
         Item item = new Item();
         item.setItemName("Pasta");
         List<Item> items = singletonList(item);
-
+        Mockito.when(restaurantService.getRestaurantDetails(1)).thenReturn(restaurant);
         Mockito.when(itemService.getItemByPopularity(1)).thenReturn(items);
         String url = "/item/restaurant/1";
         mvc.perform(get(url))
