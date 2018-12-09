@@ -25,17 +25,18 @@ public class OrderController {
     @Autowired
     private ItemService itemService;
 
-    //**To retrieve coupond details from the database**
+    //If the coupon name entered by the user matches any coupon in the database, retrieve the coupon details
+
     @GetMapping("/coupon/{couponName}")
     @CrossOrigin
     ResponseEntity<?> getCouponByCouponName(@PathVariable String couponName, @RequestHeader String accessToken) {
 
         UserAuthToken usertoken = userAuthTokenService.isUserLoggedIn(accessToken);
 
-        //**To check if user is logged in**
+        // Checking if user is logged in.
         if (usertoken == null) {
             return new ResponseEntity<>("Please Login first to access this endpoint!", HttpStatus.UNAUTHORIZED);
-        } //**To check if user is not logged out**
+        } // checking if user is not logged out.
         else if (userAuthTokenService.isUserLoggedIn(accessToken).getLogoutAt() != null)  {
             return new ResponseEntity<>("You have already logged out. Please Login first to access this endpoint!", HttpStatus.UNAUTHORIZED);
         }
@@ -52,27 +53,27 @@ public class OrderController {
         }
     }
 
-    //**To retrieve all the previous orders from the user- sort by order date with the latest order first**
+    //Retrieve all the past orders from the user sorted by their order date, with the newest order first
 
     @GetMapping("")
     @CrossOrigin
     ResponseEntity<?> getPastOrdersOfUser(@RequestHeader String accessToken) {
 
         UserAuthToken usertoken = userAuthTokenService.isUserLoggedIn(accessToken);
-        //**To checking if user is logged in**
+        // Checking if user is logged in.
         if (usertoken == null) {
             return new ResponseEntity<>("Please Login first to access this endpoint!", HttpStatus.UNAUTHORIZED);
-        } //**To check if user is not logged out**
+        } // checking if user is not logged out.
         else if (userAuthTokenService.isUserLoggedIn(accessToken).getLogoutAt() != null)  {
             return new ResponseEntity<>("You have already logged out. Please Login first to access this endpoint!", HttpStatus.UNAUTHORIZED);
         } else {
             Integer userId = userAuthTokenService.getUserId(accessToken);
             Iterable<PastOrderResponse> orderResponse = orderService.getOrdersResponseByUser(userId);
             if (orderResponse != null && orderResponse.iterator().hasNext()) {
-                //**Display new order details  
+                // if user is ordered then display order details
                 return new ResponseEntity<>(orderResponse, HttpStatus.OK);
             }
-            else { //** if user is not ordered anything display message.
+            else { // if user is not ordered anything display message.
                 return new ResponseEntity<>("No orders have been made yet!", HttpStatus.BAD_REQUEST);
             }
         }
@@ -100,8 +101,8 @@ public class OrderController {
             return new ResponseEntity<>("You have already logged out. Please Login first to access this endpoint!", HttpStatus.UNAUTHORIZED);
         } // Below condition executed when temp address details provided , though fields are optional,
         // condition made for all fields are required without all fields no meaning of address
-        else if (String.valueOf(flatBuilNo) !=null && String.valueOf(locality) != null && String.valueOf(city) != null &&
-                String.valueOf(zipcode) !=null && stateId != null) {
+        else if (String.valueOf(flatBuilNo) != null && locality != null && city != null &&
+                String.valueOf(zipcode) != null && stateId != null) {
 
             Integer userId = userAuthTokenService.getUserId(accessToken);
 
